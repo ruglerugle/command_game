@@ -124,6 +124,17 @@
     margin-right: 8px;
   }
   button:hover { background: var(--green); }
+  .levelBtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-top: 10px;
+    background: #15301d;
+    color: var(--text);
+    border: 1px solid var(--dim);
+  }
+  .levelBtn:hover { background: var(--dim); color: #000; }
+  .levelBtn .name { color: var(--green); font-weight: bold; margin-right: 8px; }
   .footer {
     margin-top: 14px;
     font-size: 0.75rem;
@@ -158,13 +169,18 @@
   <h1>$ Unix Command Trainer</h1>
   <div class="sub">出題内容に合うUnixコマンドを入力してEnter</div>
 
-  <div class="hud">
+  <div class="terminal" id="startScreen">
+    <div class="task">開始レベルを選んでください</div>
+    <div id="levelChoices"></div>
+  </div>
+
+  <div class="hud" id="hud" style="display:none;">
     <span>レベル: <span id="level">1</span></span>
     <span>正解数: <span id="score">0</span></span>
     <span>ハイスコア: <span id="high">0</span></span>
   </div>
 
-  <div class="terminal">
+  <div class="terminal" id="gameScreen" style="display:none;">
     <div class="task"><span class="badge" id="catLabel">basic</span><span id="taskText">読み込み中...</span></div>
     <div class="promptline">
       <span>$</span>
@@ -210,6 +226,18 @@ const QUESTIONS = [
   { task: "'old.txt' というファイルを削除する", answers: ["rm old.txt"], hint: "remove", level: 1,
     output: "(出力なし。'old.txt' が削除される)",
     explain: "remove の略。ファイルを削除する。ゴミ箱には入らず元に戻せないので注意。" },
+  { task: "'empty.txt' という空のファイルを新規作成する", answers: ["touch empty.txt"], hint: "touch", level: 1,
+    output: "(出力なし。'empty.txt' が0バイトで作成される)",
+    explain: "touchは本来ファイルの更新日時を変更するコマンド。指定したファイルが存在しない場合は空のファイルを新規作成する。" },
+  { task: "画面に 'Hello' という文字列を表示する", answers: ["echo Hello"], hint: "echo", level: 1,
+    output: "Hello",
+    explain: "echoは引数に渡した文字列をそのまま標準出力に表示するコマンド。" },
+  { task: "'note.txt' をページ送りしながら閲覧する", answers: ["less note.txt"], hint: "less", level: 1,
+    output: "(note.txtの内容がページ単位で表示される。qで終了)",
+    explain: "lessは長いファイルをスクロールしながら閲覧できるページャ。catと違い1画面ずつ表示できる。" },
+  { task: "'ls' コマンドの使い方(マニュアル)を表示する", answers: ["man ls"], hint: "man", level: 1,
+    output: "(lsコマンドのマニュアルページが表示される)",
+    explain: "manはmanual(マニュアル)の略。指定したコマンドの詳しい使い方・オプション一覧を表示する。" },
 
   { task: "ファイル一覧を詳細情報(パーミッション等)付きで表示する", answers: ["ls -l"], hint: "long format", level: 2,
     output: "-rw-r--r-- 1 user user  120 Jun 19 10:00 a.txt\n-rw-r--r-- 1 user user   45 Jun 19 10:01 b.txt",
@@ -241,6 +269,21 @@ const QUESTIONS = [
   { task: "ディスクの使用量を人が読みやすい形式で表示する", answers: ["df -h"], hint: "disk free, human-readable", level: 2,
     output: "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1        50G   12G   38G  24% /",
     explain: "disk free の略。ファイルシステムごとの空き容量を表示する。'-h'はhuman-readableで、バイト数をGB/MB単位に変換して見やすくする。" },
+  { task: "'data.txt' の行数を数える", answers: ["wc -l data.txt"], hint: "word count", level: 2,
+    output: "42 data.txt",
+    explain: "word count の略。本来は行数・単語数・バイト数を数えるコマンドで、'-l'は行数のみ表示する指定。" },
+  { task: "'docs' ディレクトリの合計サイズを人が読みやすい形式で表示する", answers: ["du -sh docs"], hint: "disk usage", level: 2,
+    output: "120M    docs",
+    explain: "disk usage の略。ファイルやディレクトリが使用しているディスク容量を表示する。'-s'は合計のみ、'-h'は人が読みやすい単位にする指定。" },
+  { task: "現在ログインしているユーザー名を表示する", answers: ["whoami"], hint: "whoami", level: 2,
+    output: "user",
+    explain: "現在のシェルを実行しているユーザー名を表示するコマンド。" },
+  { task: "OS・カーネルの情報を表示する", answers: ["uname -a"], hint: "uname", level: 2,
+    output: "Linux myhost 5.15.0-generic #1 SMP x86_64 GNU/Linux",
+    explain: "unameはunix nameの略。'-a'はall情報の意味で、カーネル名・ホスト名・バージョンなどをまとめて表示する。" },
+  { task: "'target.txt' への シンボリックリンク 'link.txt' を作成する", answers: ["ln -s target.txt link.txt"], hint: "link symbolic", level: 2,
+    output: "(出力なし。'link.txt' が 'target.txt' へのリンクとして作成される)",
+    explain: "linkの略。'-s'はsymbolic(シンボリック)で、元ファイルを指すショートカットのようなリンクファイルを作成する。" },
 
   { task: "PID 1234 のプロセスを強制終了する", answers: ["kill -9 1234", "kill 1234"], hint: "kill", level: 3,
     output: "(出力なし。PID 1234 のプロセスが終了する)",
@@ -269,6 +312,18 @@ const QUESTIONS = [
   { task: "環境変数 PATH の値を表示する", answers: ["echo $PATH"], hint: "echo $変数名", level: 3,
     output: "/usr/local/bin:/usr/bin:/bin",
     explain: "echoは文字列を表示するコマンド。'$変数名'はシェル変数・環境変数の値に展開される。PATHはコマンド検索対象ディレクトリの一覧。" },
+  { task: "環境変数 MY_VAR に 'hello' という値を設定する", answers: ["export MY_VAR=hello"], hint: "export", level: 3,
+    output: "(出力なし。以後のプロセスに MY_VAR=hello が渡される)",
+    explain: "exportはシェル変数を環境変数として子プロセスにも引き渡せるようにするコマンド。" },
+  { task: "メモリの使用状況を人が読みやすい形式で表示する", answers: ["free -h"], hint: "free", level: 3,
+    output: "              total        used        free\nMem:           7.7G        2.1G        3.4G",
+    explain: "freeは搭載メモリと使用中・空きメモリ量を表示するコマンド。'-h'はバイト数をGB/MB単位に変換して見やすくする。" },
+  { task: "実行中のプロセスをリアルタイムに監視する画面を開く", answers: ["top"], hint: "top", level: 3,
+    output: "(CPU/メモリ使用率の高いプロセスがリアルタイム表示される。qで終了)",
+    explain: "topはCPU・メモリ使用率の高いプロセスから順にリアルタイムで一覧表示するコマンド。" },
+  { task: "現在のユーザーIDとグループIDを表示する", answers: ["id"], hint: "id", level: 3,
+    output: "uid=1000(user) gid=1000(user) groups=1000(user)",
+    explain: "idは現在のユーザーのUID(ユーザーID)・GID(グループID)・所属グループを表示するコマンド。" },
 
   { task: "'names.txt' を行単位でソートする", answers: ["sort names.txt"], hint: "sort", level: 4,
     output: "alice\nbob\ncarol",
@@ -306,6 +361,21 @@ const QUESTIONS = [
   { task: "'app.js' というコマンドがどこにインストールされているか調べる", answers: ["which app.js"], hint: "which", level: 4,
     output: "/usr/local/bin/app.js",
     explain: "whichはPATHに登録されたディレクトリを検索し、指定したコマンドの実行ファイルの場所を表示する。" },
+  { task: "'src' ディレクトリの内容を 'backup' ディレクトリへ同期する", answers: ["rsync -av src backup"], hint: "rsync -av", level: 4,
+    output: "sending incremental file list\nsrc/app.js\n\nsent 1,024 bytes  received 35 bytes",
+    explain: "rsyncは差分のみを転送してディレクトリ間を同期するコマンド。'-a'はarchive(属性保持)、'-v'はverbose(詳細表示)の指定。" },
+  { task: "現在のユーザーのcrontab(定期実行設定)を編集する", answers: ["crontab -e"], hint: "crontab -e", level: 4,
+    output: "(crontabの編集画面が開く)",
+    explain: "crontabは定期的にコマンドを実行するスケジュール設定を管理するコマンド。'-e'はedit(編集)の指定。" },
+  { task: "実行中のジョブを 'cmd &' のようにバックグラウンドで起動する(ログアウトしても続行)", answers: ["nohup cmd &"], hint: "nohup ... &", level: 4,
+    output: "nohup: ignoring input and appending output to 'nohup.out'",
+    explain: "'&'はコマンドをバックグラウンドで実行する指定。nohupを付けるとログアウト時に送られるシグナルを無視し、処理を継続させる。" },
+  { task: "ポート80番を使用しているプロセスを調べる", answers: ["lsof -i :80"], hint: "lsof -i", level: 4,
+    output: "COMMAND   PID  USER  FD   TYPE  NAME\nnginx     900  root  6u   IPv4  *:80 (LISTEN)",
+    explain: "lsofはlist open filesの略。'-i :ポート番号'で指定ポートを使用しているプロセスを調べられる。" },
+  { task: "現在停止中のバックグラウンドジョブをフォアグラウンドに戻す", answers: ["fg"], hint: "fg", level: 4,
+    output: "(直前に停止/バックグラウンド化したジョブがフォアグラウンドで再開される)",
+    explain: "fgはforegroundの略。Ctrl+Zで停止したジョブや'&'でバックグラウンド化したジョブをフォアグラウンドに戻す。" },
 ];
 
 let score = 0;
@@ -465,8 +535,37 @@ document.getElementById("hintBtn").addEventListener("click", () => {
 });
 document.getElementById("skipBtn").addEventListener("click", pickQuestion);
 
-buildPool();
-pickQuestion();
+const LEVEL_INFO = [
+  { level: 1, name: "Lv1 基本操作", desc: "ls / cd / mkdir などファイル操作の基本", baseScore: 0 },
+  { level: 2, name: "Lv2 検索・権限", desc: "grep / find / chmod / ps など", baseScore: 8 },
+  { level: 3, name: "Lv3 応用操作", desc: "パイプ・リダイレクト・tar・kill など", baseScore: 16 },
+  { level: 4, name: "Lv4 高度な操作", desc: "sed / awk / ssh / curl など", baseScore: 24 },
+];
+
+function startGame(chosenLevel, baseScore) {
+  level = chosenLevel;
+  score = baseScore;
+  document.getElementById("score").textContent = score;
+  document.getElementById("level").textContent = level;
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("hud").style.display = "flex";
+  document.getElementById("gameScreen").style.display = "block";
+  buildPool();
+  pickQuestion();
+}
+
+function renderLevelChoices() {
+  const box = document.getElementById("levelChoices");
+  LEVEL_INFO.forEach(info => {
+    const btn = document.createElement("button");
+    btn.className = "levelBtn";
+    btn.innerHTML = '<span class="name">' + info.name + '</span>' + info.desc;
+    btn.addEventListener("click", () => startGame(info.level, info.baseScore));
+    box.appendChild(btn);
+  });
+}
+
+renderLevelChoices();
 </script>
 </body>
 </html>
