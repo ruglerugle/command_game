@@ -165,9 +165,10 @@
   }
   .excludeRow {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    gap: 6px 10px;
     background: #15301d;
     border: 1px solid var(--dim);
     border-radius: 6px;
@@ -175,11 +176,11 @@
     margin-top: 8px;
     font-size: 0.85rem;
   }
-  .excludeRow span { flex: 1; min-width: 0; }
+  .excludeRow span { flex: 1 1 100%; min-width: 0; }
   .excludeRow button {
     flex: 0 0 auto;
     width: auto;
-    margin: 0;
+    margin: 0 0 0 auto;
     padding: 4px 10px;
     font-size: 0.75rem;
     white-space: nowrap;
