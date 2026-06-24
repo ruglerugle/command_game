@@ -360,7 +360,7 @@ const QUESTIONS = [
   { task: "隠しファイルも含めて一覧表示する", answers: ["ls -a", "ls -la", "ls -la", "ls -al"], hint: "all", level: 2,
     output: ".  ..  .bashrc  a.txt  b.txt  docs",
     explain: "'-a' は all。'.'で始まる隠しファイルも含めて全て表示する。'-la'は'-l'と'-a'を組み合わせたもの。" },
-  { task: "ディレクトリを中身があっても再帰的に削除する", answers: ["rm -r dir", "rm -rf dir"], hint: "recursive", level: 2,
+  { task: "'dir' という名前のディレクトリを、中身があっても再帰的に削除する", answers: ["rm -r dir", "rm -rf dir"], hint: "recursive", level: 2,
     output: "(出力なし。'dir' とその中身が全て削除される)",
     explain: "'-r' は recursive(再帰的)。ディレクトリの中身も含めて削除する。'-f'はforce(強制)で確認を省略する。" },
   { task: "'log.txt' から 'error' という文字列を含む行を検索する", answers: ["grep error log.txt"], hint: "global regular expression print", level: 2,
