@@ -74,8 +74,10 @@
     gap: 6px;
   }
   .promptline span { color: var(--green); }
-  input#answer {
+  input#answer,
+  input#tAnswer {
     flex: 1;
+    min-width: 0;
     background: transparent;
     border: none;
     color: var(--text);
@@ -235,7 +237,7 @@
     }
     .terminal { padding: 12px; min-height: 0; }
     .task { font-size: 0.95rem; margin-bottom: 10px; }
-    input#answer { font-size: 1rem; min-width: 0; }
+    input#answer, input#tAnswer { font-size: 1rem; min-width: 0; }
     button {
       width: 100%;
       margin-right: 0;
