@@ -553,7 +553,7 @@ const QUESTIONS = [
     explain: "journalctlはsystemdが記録したログ(journal)を表示するコマンド。'-u'でサービス単位を指定する。" },
   { task: "現在開いている全てのTCPリスニングポートを一覧表示する", answers: ["ss -tulpn"], hint: "ss -tulpn", level: 4,
     output: "Netid State  Local Address:Port\ntcp   LISTEN 0.0.0.0:80",
-    explain: "ssはsocket statisticsの略。netstatの後継として、開いているネットワークソケット(ポート)を一覧表示する。" },
+    explain: "ssはsocket statisticsの略。netstatの後継として、開いているネットワークソケット(ポート)を一覧表示する。オプションの意味は、'-t'がTCP、'-u'がUDP(この2つで対象プロトコルを指定)、'-l'がlistening(待ち受け中)のソケットのみ表示、'-p'がprocess(利用しているプロセス名/PID)を表示、'-n'がnumeric(ポート番号などを名前解決せず数値のまま表示、サービス名に変換しない)という意味。" },
   { task: "実行中のDockerコンテナを一覧表示する", answers: ["docker ps"], hint: "docker ps", level: 4,
     output: "CONTAINER ID  IMAGE   STATUS\nabc123        nginx   Up 2 hours",
     explain: "dockerはコンテナを操作するコマンド。'ps'は実行中のコンテナの一覧を表示するサブコマンド。" },
