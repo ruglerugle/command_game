@@ -503,7 +503,7 @@ const QUESTIONS = [
   { task: "'list.txt' の各行を引数として 'rm' に渡して削除する", answers: ["cat list.txt | xargs rm", "xargs rm < list.txt"], hint: "xargs", level: 4,
     output: "(出力なし。list.txtに書かれたファイルが全て削除される)",
     explain: "xargsは標準入力から受け取った内容を、後続コマンドの引数として渡す。grepやfindの検索結果をまとめて処理する際によく使う。" },
-  { task: "'data.csv' の2列目だけを取り出す(カンマ区切り)", answers: ["awk -F, '{print $2}' data.csv", "cut -d, -f2 data.csv"], hint: "awk -F または cut -d", level: 4,
+  { task: "'data.csv' の2列目だけを取り出す(カンマ区切り)", answers: ["awk -F, '{print $2}' data.csv", "cut -d, -f2 data.csv", "cut -d',' -f2 data.csv", "cut -d \",\" -f2 data.csv", "cut -f2 -d, data.csv", "cut -f 2 -d , data.csv"], hint: "awk -F または cut -d", level: 4,
     output: "30\n25\n40",
     explain: "awkは列単位でテキストを処理する言語。'-F,'は区切り文字をカンマに指定、'$2'は2列目を意味する。cutも同様に列を切り出せ、'-d'が区切り文字、'-f'が列番号。" },
   { task: "'config.txt' 内の 'foo' を全て 'bar' に置換する(画面に表示するだけ)", answers: ["sed 's/foo/bar/g' config.txt"], hint: "sed s/old/new/g", level: 4,
