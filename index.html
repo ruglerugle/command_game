@@ -791,12 +791,12 @@ function buildPool() {
 }
 
 function normalize(s) {
-  return s.trim().replace(/\s+/g, " ").toLowerCase();
+  return s.trim().replace(/\s+/g, " ");
 }
 
 function normalizeFlagOrder(s) {
   return s.split(" ").map(tok => {
-    if (/^-[a-z]+$/.test(tok)) {
+    if (/^-[a-zA-Z]+$/.test(tok)) {
       return "-" + tok.slice(1).split("").sort().join("");
     }
     return tok;
