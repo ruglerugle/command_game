@@ -608,7 +608,7 @@ const QUESTIONS = [
     output: "  adding: a.txt (deflated 10%)\n  adding: b.txt (deflated 8%)",
     explain: "zipは複数ファイルを1つの圧縮ファイルにまとめるコマンド。ワイルドカードと組み合わせることで、該当する全ファイルを一度に圧縮できる。" },
 
-  { task: "拡張子'.bak'の全ファイルを、findのexecオプションを使って1つずつ削除する", answers: ["find . -name \"*.bak\" -exec rm {} \\;", "find . -name '*.bak' -exec rm {} \\;"], hint: "find . -name パターン -exec コマンド {} \\;", level: 6,
+  { task: "カレントディレクトリ以下にある拡張子'.bak'の全ファイルを、findのexecオプションを使って1つずつ削除する", answers: ["find . -name \"*.bak\" -exec rm {} \\;", "find . -name '*.bak' -exec rm {} \\;"], hint: "find . -name パターン -exec コマンド {} \\;", level: 6,
     output: "(出力なし。サブディレクトリも含めて'.bak'ファイルが1つずつrmされる)",
     explain: "'-exec'は見つかった各ファイルに対して任意のコマンドを実行できるオプション。'{}'は見つかったファイル名が入るプレースホルダー、末尾の'\\;'は-execの範囲がここで終わることを示す区切り(';'はシェルに解釈されないよう'\\'でエスケープする必要がある)。'-delete'は削除専用だが、'-exec'を使えばmvやchmodなど任意の処理に置き換えられる。" },
   { task: "カレントディレクトリ以下から、ディレクトリを除いた通常ファイルだけを探す", answers: ["find . -type f"], hint: "find . -type f/d/l", level: 6,
